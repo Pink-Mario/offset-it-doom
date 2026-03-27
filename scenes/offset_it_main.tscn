@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://r6n1qek5rrw5"]
 
+[ext_resource type="Script" uid="uid://ctro30dw1cpit" path="res://scenes/offset_it_main.gd" id="1_7i0kc"]
+[ext_resource type="Texture2D" uid="uid://i7k0nihu78de" path="res://_assets/C0HOA0.png" id="2_7i0kc"]
+
 [node name="OffsetItMain" type="Control" unique_id=1979707288]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +10,129 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_7i0kc")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1938813727]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16565639, 0.16565642, 0.16565636, 1)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=425598465]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 320.0
+offset_top = 140.0
+offset_right = 640.0
+offset_bottom = 460.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=2006900326]
+snap_2d_transforms_to_pixel = true
+size = Vector2i(320, 320)
+
+[node name="SpriteEditorSpace" type="Control" parent="SubViewportContainer/SubViewport" unique_id=1131804056]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="WeaponSprite" type="TextureRect" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=427827823]
+layout_mode = 0
+offset_left = 59.0
+offset_top = 216.0
+offset_right = 207.0
+offset_bottom = 308.0
+texture = ExtResource("2_7i0kc")
+stretch_mode = 2
+
+[node name="CrosshairLineH" type="HSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=572499271]
+z_index = -1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -159.5
+offset_top = -2.0
+offset_right = 159.5
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CrosshairLineV" type="VSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=914331923]
+z_index = -1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_top = -159.5
+offset_right = 2.0
+offset_bottom = 159.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OffsetDataContainer" type="HBoxContainer" parent="." unique_id=580430738]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 533.0
+offset_right = 355.0
+offset_bottom = 583.0
+
+[node name="OffsetLabel" type="Label" parent="OffsetDataContainer" unique_id=1190270802]
+layout_mode = 2
+text = "Offset: "
+
+[node name="SpriteOffsetX" type="SpinBox" parent="OffsetDataContainer" unique_id=2009517848]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="SpriteOffsetY" type="SpinBox" parent="OffsetDataContainer" unique_id=54423969]
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="FileDialog" type="FileDialog" parent="." unique_id=128495502]
+oversampling_override = 1.0
+title = "Open a File"
+position = Vector2i(0, 36)
+file_mode = 0
+filters = PackedStringArray("*.png", "*.jpg", "*.webp")
+
+[node name="ImportButton" type="Button" parent="." unique_id=873881610]
+layout_mode = 0
+offset_left = 751.0
+offset_top = 532.0
+offset_right = 829.3469
+offset_bottom = 563.0
+text = "Import"
+
+[node name="SetOriginButton" type="Button" parent="." unique_id=1281355721]
+layout_mode = 0
+offset_left = 841.0
+offset_top = 532.0
+offset_right = 925.0
+offset_bottom = 563.0
+text = "Set Origin"
+
+[connection signal="mouse_entered" from="SubViewportContainer/SubViewport/SpriteEditorSpace/WeaponSprite" to="." method="_on_weapon_sprite_mouse_entered"]
+[connection signal="mouse_exited" from="SubViewportContainer/SubViewport/SpriteEditorSpace/WeaponSprite" to="." method="_on_weapon_sprite_mouse_exited"]
+[connection signal="value_changed" from="OffsetDataContainer/SpriteOffsetX" to="." method="_on_sprite_offset_x_value_changed"]
+[connection signal="value_changed" from="OffsetDataContainer/SpriteOffsetY" to="." method="_on_sprite_offset_y_value_changed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="ImportButton" to="." method="_on_import_button_pressed"]
+[connection signal="pressed" from="SetOriginButton" to="." method="_on_set_origin_button_pressed"]

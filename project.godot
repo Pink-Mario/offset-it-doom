@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="OffsetIt"
+run/main_scene="uid://r6n1qek5rrw5"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=960
+window/size/viewport_height=600
 window/stretch/mode="canvas_items"
 
 [physics]
@@ -26,4 +27,5 @@ window/stretch/mode="canvas_items"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
