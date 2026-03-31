@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://bg10jccx7k304"]
+
+[ext_resource type="Shader" uid="uid://psq7x3xnyafk" path="res://white_flash.gdshader" id="1_vn17q"]
+[ext_resource type="Texture2D" uid="uid://bejoimu2dbpv2" path="res://_assets/6LABA0.png" id="2_irhw2"]
+[ext_resource type="Script" uid="uid://cgq2els0o1a44" path="res://scenes/texture_ghost_image.gd" id="3_irhw2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_upemf"]
+shader = ExtResource("1_vn17q")
+shader_parameter/pulse_speed = 8.0
+shader_parameter/min_alpha = 0.05
+shader_parameter/max_alpha = 0.15
+
+[node name="TextureGhostImage" type="TextureRect" unique_id=1424573800]
+material = SubResource("ShaderMaterial_upemf")
+offset_right = 40.0
+offset_bottom = 40.0
+focus_behavior_recursive = 1
+mouse_filter = 2
+mouse_behavior_recursive = 1
+texture = ExtResource("2_irhw2")
+stretch_mode = 2
+script = ExtResource("3_irhw2")

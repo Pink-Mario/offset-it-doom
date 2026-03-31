@@ -11,9 +11,11 @@ config_version=5
 [application]
 
 config/name="OffsetIt"
+config/version="1"
 run/main_scene="uid://r6n1qek5rrw5"
 config/features=PackedStringArray("4.6", "Forward Plus")
-config/icon="res://icon.svg"
+boot_splash/image="uid://q1cxjseldcso"
+config/icon="uid://q1cxjseldcso"
 
 [display]
 

@@ -1,7 +1,14 @@
 [gd_scene format=3 uid="uid://r6n1qek5rrw5"]
 
 [ext_resource type="Script" uid="uid://ctro30dw1cpit" path="res://scenes/offset_it_main.gd" id="1_7i0kc"]
-[ext_resource type="Texture2D" uid="uid://i7k0nihu78de" path="res://_assets/C0HOA0.png" id="2_7i0kc"]
+[ext_resource type="Theme" uid="uid://bd5bdirjjv3ky" path="res://the_theme.tres" id="1_gw286"]
+[ext_resource type="Shader" uid="uid://ijbgp30sm2ra" path="res://scenes/offset_it_main.gdshader" id="2_gw286"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kuv8i"]
+shader = ExtResource("2_gw286")
+shader_parameter/color_a = Color(0.8, 0.8, 0.8, 0.05)
+shader_parameter/color_b = Color(0.4, 0.4, 0.4, 0.05)
+shader_parameter/squares = 32.0
 
 [node name="OffsetItMain" type="Control" unique_id=1979707288]
 layout_mode = 3
@@ -10,6 +17,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_gw286")
 script = ExtResource("1_7i0kc")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1938813727]
@@ -23,18 +31,24 @@ color = Color(0.16565639, 0.16565642, 0.16565636, 1)
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=425598465]
 layout_mode = 1
-anchors_preset = -1
-offset_left = 320.0
-offset_top = 140.0
-offset_right = 640.0
-offset_bottom = 460.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -271.0
+offset_top = -70.0
+offset_right = 49.0
+offset_bottom = 130.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=2006900326]
+handle_input_locally = false
 snap_2d_transforms_to_pixel = true
-size = Vector2i(320, 320)
+size = Vector2i(320, 200)
+render_target_update_mode = 4
 
 [node name="SpriteEditorSpace" type="Control" parent="SubViewportContainer/SubViewport" unique_id=1131804056]
 layout_mode = 3
@@ -45,14 +59,26 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
+[node name="ColorRect" type="ColorRect" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=472854769]
+material = SubResource("ShaderMaterial_kuv8i")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.3764706, 0.3764706, 0.3764706, 0.39215687)
+metadata/_edit_lock_ = true
+
 [node name="WeaponSprite" type="TextureRect" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=427827823]
 layout_mode = 0
-offset_left = 59.0
-offset_top = 216.0
-offset_right = 207.0
-offset_bottom = 308.0
-texture = ExtResource("2_7i0kc")
+offset_left = 178.0
+offset_top = 96.0
+offset_right = 322.0
+offset_bottom = 204.0
 stretch_mode = 2
+metadata/_edit_lock_ = true
 
 [node name="CrosshairLineH" type="HSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=572499271]
 z_index = -1
@@ -68,6 +94,7 @@ offset_right = 159.5
 offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="CrosshairLineV" type="VSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=914331923]
 z_index = -1
@@ -83,6 +110,55 @@ offset_right = 2.0
 offset_bottom = 159.5
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="VisibleLine1" type="HSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=1615014762]
+z_index = -1
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -159.5
+offset_top = -20.0
+offset_right = 159.5
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_lock_ = true
+
+[node name="VisibleLine2" type="HSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=263044385]
+z_index = -1
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -159.5
+offset_top = -30.0
+offset_right = 159.5
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_lock_ = true
+
+[node name="VisibleLine3" type="HSeparator" parent="SubViewportContainer/SubViewport/SpriteEditorSpace" unique_id=166946357]
+z_index = -1
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -159.5
+offset_top = -10.0
+offset_right = 159.5
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 0
+metadata/_edit_lock_ = true
 
 [node name="OffsetDataContainer" type="HBoxContainer" parent="." unique_id=580430738]
 layout_mode = 0
@@ -101,7 +177,6 @@ min_value = -2000.0
 max_value = 2000.0
 
 [node name="SpriteOffsetY" type="SpinBox" parent="OffsetDataContainer" unique_id=54423969]
-custom_minimum_size = Vector2(100, 32)
 layout_mode = 2
 min_value = -2000.0
 max_value = 2000.0
@@ -111,28 +186,117 @@ oversampling_override = 1.0
 title = "Open a File"
 position = Vector2i(0, 36)
 file_mode = 0
+access = 2
 filters = PackedStringArray("*.png", "*.jpg", "*.webp")
 
-[node name="ImportButton" type="Button" parent="." unique_id=873881610]
+[node name="OffsetItDisplay" type="VBoxContainer" parent="." unique_id=1020014341]
 layout_mode = 0
-offset_left = 751.0
-offset_top = 532.0
-offset_right = 829.3469
-offset_bottom = 563.0
-text = "Import"
+offset_left = 574.0
+offset_top = 105.0
+offset_right = 953.0
+offset_bottom = 507.0
 
-[node name="SetOriginButton" type="Button" parent="." unique_id=1281355721]
+[node name="OffsetItDisplayTitle" type="Label" parent="OffsetItDisplay" unique_id=1791688122]
+layout_mode = 2
+text = "* Offset() Calls"
+horizontal_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="OffsetCallsPer" type="SpinBox" parent="OffsetItDisplay" unique_id=358455958]
+layout_mode = 2
+min_value = 2.0
+max_value = 16.0
+value = 4.0
+alignment = 1
+prefix = "-"
+suffix = "-"
+metadata/_edit_lock_ = true
+
+[node name="OffsetCallList" type="TextEdit" parent="OffsetItDisplay" unique_id=1205601584]
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="ButtonHBox" type="HBoxContainer" parent="." unique_id=1360478260]
 layout_mode = 0
-offset_left = 841.0
-offset_top = 532.0
-offset_right = 925.0
-offset_bottom = 563.0
+offset_left = 550.0
+offset_top = 517.0
+offset_right = 949.0
+offset_bottom = 572.0
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="ButtonHBox" unique_id=45182657]
+layout_mode = 2
+text = "Play"
+metadata/_edit_lock_ = true
+
+[node name="ImportButton" type="Button" parent="ButtonHBox" unique_id=873881610]
+layout_mode = 2
+text = "Import"
+metadata/_edit_lock_ = true
+
+[node name="HSeparator" type="VSeparator" parent="ButtonHBox" unique_id=228590828]
+layout_mode = 2
+
+[node name="MakeCellButton" type="Button" parent="ButtonHBox" unique_id=2108262669]
+layout_mode = 2
+text = "Make Cell"
+metadata/_edit_lock_ = true
+
+[node name="SetOriginButton" type="Button" parent="ButtonHBox" unique_id=1281355721]
+layout_mode = 2
 text = "Set Origin"
+metadata/_edit_lock_ = true
+
+[node name="HSeparator2" type="VSeparator" parent="ButtonHBox" unique_id=446734008]
+layout_mode = 2
+
+[node name="ResetOffsetButton" type="Button" parent="ButtonHBox" unique_id=1662411495]
+layout_mode = 2
+text = "Reset"
+metadata/_edit_lock_ = true
+
+[node name="AnimCellScroll" type="ScrollContainer" parent="." unique_id=760051621]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 34.0
+offset_right = 532.0
+offset_bottom = 203.0
+
+[node name="CellContainerP" type="PanelContainer" parent="AnimCellScroll" unique_id=500927260]
+custom_minimum_size = Vector2(332, 169)
+layout_mode = 2
+
+[node name="CellContainerG" type="GridContainer" parent="AnimCellScroll/CellContainerP" unique_id=1269394936]
+layout_mode = 2
+columns = 12
+
+[node name="DefaultOffsetsButton" type="Button" parent="." unique_id=757788081]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 505.0
+offset_right = 197.0
+offset_bottom = 527.0
+text = "Default Offsets"
+
+[node name="PlaybackTimer" type="Timer" parent="." unique_id=1869831946]
+
+[node name="OffsetItSlider" type="HSlider" parent="." unique_id=420637701]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 440.41248
+offset_right = 529.0
+offset_bottom = 456.41248
 
 [connection signal="mouse_entered" from="SubViewportContainer/SubViewport/SpriteEditorSpace/WeaponSprite" to="." method="_on_weapon_sprite_mouse_entered"]
 [connection signal="mouse_exited" from="SubViewportContainer/SubViewport/SpriteEditorSpace/WeaponSprite" to="." method="_on_weapon_sprite_mouse_exited"]
 [connection signal="value_changed" from="OffsetDataContainer/SpriteOffsetX" to="." method="_on_sprite_offset_x_value_changed"]
 [connection signal="value_changed" from="OffsetDataContainer/SpriteOffsetY" to="." method="_on_sprite_offset_y_value_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
-[connection signal="pressed" from="ImportButton" to="." method="_on_import_button_pressed"]
-[connection signal="pressed" from="SetOriginButton" to="." method="_on_set_origin_button_pressed"]
+[connection signal="pressed" from="ButtonHBox/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="ButtonHBox/ImportButton" to="." method="_on_import_button_pressed"]
+[connection signal="pressed" from="ButtonHBox/MakeCellButton" to="." method="_on_make_cell_button_pressed"]
+[connection signal="pressed" from="ButtonHBox/SetOriginButton" to="." method="_on_set_origin_button_pressed"]
+[connection signal="pressed" from="ButtonHBox/ResetOffsetButton" to="." method="_on_reset_offset_button_pressed"]
+[connection signal="pressed" from="DefaultOffsetsButton" to="." method="_on_default_offsets_button_pressed"]
+[connection signal="value_changed" from="OffsetItSlider" to="." method="_on_offset_it_slider_value_changed"]

@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bp4ui810hfjmf"]
+
+[ext_resource type="Script" uid="uid://dv6li6ndvwrkv" path="res://scenes/texture_enhance.gd" id="1_6vtkc"]
+
+[node name="TextureEnhance" type="TextureRect" unique_id=896941852]
+modulate = Color(1, 1, 1, 0.4117647)
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+script = ExtResource("1_6vtkc")

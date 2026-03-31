@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://di36aerxssl18"]
+
+[ext_resource type="Script" uid="uid://c8v7low1n3jnf" path="res://scenes/anim_cell.gd" id="1_vgsyp"]
+
+[node name="AnimCell" type="PanelContainer" unique_id=703328836]
+anchors_preset = -1
+anchor_right = 0.025
+anchor_bottom = 0.082
+offset_bottom = -0.20000076
+script = ExtResource("1_vgsyp")
+
+[node name="CellVBox" type="VBoxContainer" parent="." unique_id=1976592905]
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="CellNum" type="Label" parent="CellVBox" unique_id=932796408]
+layout_mode = 2
+text = "1"
+horizontal_alignment = 1
+
+[node name="CellSelected" type="CheckBox" parent="CellVBox" unique_id=1551529908]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+icon_alignment = 1
+
+[node name="XOutCellButton" type="Button" parent="CellVBox" unique_id=622639771]
+layout_mode = 2
+text = "X"

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://busnw2vqhg0e5"]
+
+[node name="CurvePointLine" type="Line2D" unique_id=770329849]
+width = 2.0
+default_color = Color(0, 0.77817935, 0.2805167, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+round_precision = 4
