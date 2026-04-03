@@ -19,8 +19,8 @@ config/icon="uid://q1cxjseldcso"
 
 [display]
 
-window/size/viewport_width=960
-window/size/viewport_height=600
+window/size/viewport_width=1280
+window/size/viewport_height=800
 window/stretch/mode="canvas_items"
 
 [physics]

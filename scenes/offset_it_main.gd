@@ -6,8 +6,8 @@ var drag_offset: Vector2 = Vector2.ZERO
 
 var sprite_offset: Vector2 = Vector2(-184, -94)
 
-const FULL_SIZE: Vector2 = Vector2(320, 200)
-const ANCHOR_POINT: Vector2 = Vector2.ZERO
+const FULL_SIZE: Vector2 = Vector2(640, 400)
+const ANCHOR_POINT: Vector2 = Vector2(160, 100)
 const DEFAULT_OFFSET: Vector2 = Vector2(0, 32)
 const DEFAULT_SPRITE_OFFSET: Vector2 = Vector2(-184, -94)
 const TEXTURE_GHOST = preload("res://scenes/texture_ghost_image.tscn")
@@ -49,6 +49,7 @@ class CellData:
 	var sprite_texture: Texture2D = null
 	var sprite_size: Vector2 = Vector2.ZERO
 	var sprite_offset: Vector2 = Vector2.ZERO
+	var reference_offset: Vector2 = Vector2.ZERO  # NEW: The offset that maps to (0, 32)
 	var cell_ui: AnimCell = null
 	var ghost_node: TextureRect = null
 	
@@ -64,7 +65,11 @@ var playback_speed: float = 0.03
 
 var button_pulse_tween: Tween
 
-var imported_sprite_path = ""
+var imported_sprite_path = "":
+	set(value):
+		imported_sprite_path = value
+		print(imported_sprite_path)
+
 var last_imported_sprite_name: String = ""
 
 func _ready() -> void:
@@ -82,13 +87,20 @@ func _ready() -> void:
 	create_default_cell()
 
 func create_default_cell() -> void:
-	"""Creates a default 0th cell"""
 	var default_cell = CellData.new()
-	default_cell.sprite_offset = DEFAULT_SPRITE_OFFSET
+	var grab_offset = read_grab_offset(imported_sprite_path)
+	
+	if weapon_sprite.texture:
+		default_cell.sprite_texture = weapon_sprite.texture
+		default_cell.sprite_name = imported_sprite_name
+		default_cell.sprite_size = weapon_sprite.size
+	
+	default_cell.sprite_offset = grab_offset
+	default_cell.reference_offset = grab_offset
+	
 	animation_cells.append(default_cell)
 	add_cell_ui(0)
 	create_ghost_for_cell(0)
-	set_active_cell(0)
 	update_slider_range()
 
 func _on_weapon_sprite_mouse_entered() -> void:
@@ -197,7 +209,7 @@ func add_cell_ui(index: int) -> void:
 	cell_ui.cell_clicked.connect(func(): on_cell_clicked(index))
 	cell_ui.cell_closed.connect(func(): on_cell_closed(index))
 	cell.cell_ui = cell_ui
-
+	
 func on_cell_clicked(index: int) -> void:
 	if is_playing or origin_set:
 		return
@@ -269,39 +281,45 @@ func create_cell_from_drag() -> void:
 	var steps = int(offset_calls_per.value)
 	if steps <= 0:
 		return
-
-	if active_cell_index >= 0 and active_cell_index < animation_cells.size():
+	var ref_offset = DEFAULT_SPRITE_OFFSET
+	if active_cell_index >= 0:
+		ref_offset = animation_cells[active_cell_index].reference_offset
 		delete_cells_after(active_cell_index)
-
-	for i in range(1, steps + 1):
-		var t = float(i) / float(steps)
-		
+	
+	# Calculate start and end positions for interpolation
+	var start_pos = ANCHOR_POINT - drag_start_offset
+	var end_pos = weapon_sprite.position
+	
+	for i in range(0, steps):  # Changed from range(1, steps + 1) to range(0, steps)
+		var t = float(i + 1) / float(steps)  # i+1 so first frame is at 1/steps, not 0/steps
 		var interpolated_pos: Vector2
+		
 		if curve_points.size() >= 2:
 			interpolated_pos = interpolate_along_curve(t)
 		else:
-			var start_pos = ANCHOR_POINT - drag_start_offset
-			var end_pos = weapon_sprite.position
 			interpolated_pos = start_pos.lerp(end_pos, t)
 		
 		var interpolated_offset = ANCHOR_POINT - interpolated_pos
-		interpolated_offset = interpolated_offset.round()
 		
-		var new_cell = CellData.new()
-		new_cell.sprite_texture = weapon_sprite.texture
-		new_cell.sprite_size = weapon_sprite.size
-		new_cell.sprite_name = imported_sprite_name
-		new_cell.sprite_offset = interpolated_offset
-		
-		animation_cells.append(new_cell)
-		var new_index = animation_cells.size() - 1
-		add_cell_ui(new_index)
-		create_ghost_for_cell(new_index)
+		if i == 0:
+			# Update cell 0 with the first interpolated position
+			animation_cells[active_cell_index].sprite_offset = interpolated_offset.round()
+			update_cell_ghost(active_cell_index)
+		else:
+			# Create new cells for subsequent frames
+			var new_cell = CellData.new()
+			new_cell.sprite_texture = weapon_sprite.texture
+			new_cell.sprite_size = weapon_sprite.size
+			new_cell.sprite_name = imported_sprite_name
+			new_cell.sprite_offset = interpolated_offset.round()
+			new_cell.reference_offset = ref_offset
+			
+			animation_cells.append(new_cell)
+			add_cell_ui(animation_cells.size() - 1)
+			create_ghost_for_cell(animation_cells.size() - 1)
 
-	if not animation_cells.is_empty():
-		set_active_cell(animation_cells.size() - 1)
-	
 	update_slider_range()
+	set_active_cell(animation_cells.size() - 1)
 	regenerate_decorate_code()
 
 func delete_cells_after(index: int) -> void:
@@ -443,28 +461,35 @@ func catmull_rom_interpolate(p0: Vector2, p1: Vector2, p2: Vector2, p3: Vector2,
 
 func regenerate_decorate_code() -> void:
 	var code_lines: Array[String] = []
-	var godot_home_pos = ANCHOR_POINT - DEFAULT_SPRITE_OFFSET
-	
 	var last_sprite_name = ""
 	
 	for i in range(animation_cells.size()):
 		var cell = animation_cells[i]
-
-		if cell.sprite_name != last_sprite_name and cell.sprite_name != "":
-			if last_sprite_name != "":
-				code_lines.append("A_WeaponReady(15)")
-			code_lines.append("// --- Sprite: %s ---" % cell.sprite_name)
-			last_sprite_name = cell.sprite_name
 		
-		var cell_pos = ANCHOR_POINT - cell.sprite_offset
-		var movement = cell_pos - godot_home_pos
-		var zdoom_offset = DEFAULT_OFFSET + movement
+		if cell.sprite_name != last_sprite_name and cell.sprite_name != "":
+			code_lines.append("// --- Sprite: %s ---" % cell.sprite_name)
+
+			if i > 0:
+				var sprite_code = generate_sprite_code(cell.sprite_name)
+				var instant_code = sprite_code.left(sprite_code.length() - 1) + "0"
+				code_lines.append("%s A_WeaponReady(15)" % instant_code)
+			
+			last_sprite_name = cell.sprite_name
+
+		var movement = cell.sprite_offset - cell.reference_offset
+		
+		var zdoom_x = DEFAULT_OFFSET.x - movement.x
+		var zdoom_y = DEFAULT_OFFSET.y - movement.y
 		
 		var sprite_code = generate_sprite_code(cell.sprite_name)
-		code_lines.append("%s Offset(%d, %d)" % [sprite_code, int(round(zdoom_offset.x)), int(round(zdoom_offset.y))])
+		code_lines.append("%s Offset(%d, %d)" % [
+			sprite_code, 
+			int(round(zdoom_x)), 
+			int(round(zdoom_y))
+		])
 	
 	offset_call_list.text = "\n".join(code_lines)
-
+	
 func generate_sprite_code(sprite_name: String) -> String:
 	if sprite_name == "":
 		return "BASB B 1"
@@ -520,18 +545,16 @@ func import_weapon_sprite(path: String) -> void:
 
 	var grab_offset = read_grab_offset(path)
 
-	if grab_offset != null:
-		sprite_offset = grab_offset
-	else:
-		sprite_offset = DEFAULT_SPRITE_OFFSET
-		
-	if active_cell_index >= 0 and active_cell_index < animation_cells.size() and active_cell_index < animation_cells.size():
+	sprite_offset = grab_offset
+	
+	if active_cell_index >= 0 and active_cell_index < animation_cells.size():
 		var cell = animation_cells[active_cell_index]
 		cell.sprite_path = asset_path if asset_path != "" else path
 		cell.sprite_name = new_sprite_name
 		cell.sprite_texture = tex
 		cell.sprite_size = new_size
 		cell.sprite_offset = sprite_offset
+		cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
 
 		if cell.ghost_node and is_instance_valid(cell.ghost_node):
 			cell.ghost_node.texture = tex
@@ -555,6 +578,7 @@ func import_weapon_sprite(path: String) -> void:
 		new_cell.sprite_size = new_size
 		new_cell.sprite_name = new_sprite_name
 		new_cell.sprite_offset = sprite_offset
+		new_cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
 		animation_cells.append(new_cell)
 		add_cell_ui(0)
 		create_ghost_for_cell(0)
@@ -564,22 +588,23 @@ func import_weapon_sprite(path: String) -> void:
 		cell.sprite_texture = tex
 		cell.sprite_name = new_sprite_name
 		cell.sprite_offset = sprite_offset
+		cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
 		update_cell_ghost(active_cell_index)
 
 	update_slider_range()
 	regenerate_decorate_code()
 
 # and this what the hell
-func read_grab_offset(path: String) -> Variant:
+func read_grab_offset(path: String) -> Vector2:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		return null
+		return DEFAULT_SPRITE_OFFSET
 	
 	var signature = file.get_buffer(8)
 	var expected = PackedByteArray([137, 80, 78, 71, 13, 10, 26, 10])
 	if signature != expected:
 		file.close()
-		return null
+		return DEFAULT_SPRITE_OFFSET
 	
 	# Read chunks
 	while not file.eof_reached():
@@ -618,7 +643,7 @@ func read_grab_offset(path: String) -> Variant:
 			file.seek(file.get_position() + length + 4)
 	
 	file.close()
-	return null
+	return DEFAULT_SPRITE_OFFSET
 
 func find_asset_for_sprite(sprite_name: String) -> String:
 	var search_paths = [
@@ -672,29 +697,21 @@ func _on_reset_offset_button_pressed() -> void:
 			cell.ghost_node.queue_free()
 		if cell.cell_ui and is_instance_valid(cell.cell_ui):
 			cell.cell_ui.queue_free()
-	animation_cells.clear()
 
+	animation_cells.clear()
 	active_cell_index = -1
-	if imported_sprite_path.is_empty():
-		return
-		
-	var grab_offset = read_grab_offset(imported_sprite_path)
-	if grab_offset != null:
-		sprite_offset = grab_offset
-	else:
-		sprite_offset = DEFAULT_SPRITE_OFFSET
-	update_weapon_position()
-	offset_call_list.text = ""
 	
 	if is_playing:
 		stop_playback()
-	
 	clear_curve_visual()
 	
-	create_default_cell()
+	create_default_cell() 
 	
-	kill_invalid_cells()
+	set_active_cell(0)
 
+	kill_invalid_cells()
+	regenerate_decorate_code()
+	
 func _on_make_cell_button_pressed() -> void:
 	if is_playing:
 		return
@@ -703,6 +720,11 @@ func _on_make_cell_button_pressed() -> void:
 	new_cell.sprite_size = weapon_sprite.size
 	new_cell.sprite_name = imported_sprite_name
 	new_cell.sprite_offset = sprite_offset
+	
+	if active_cell_index >= 0 and active_cell_index < animation_cells.size():
+		new_cell.reference_offset = animation_cells[active_cell_index].reference_offset
+	else:
+		new_cell.reference_offset = sprite_offset
 	
 	var insert_index = active_cell_index + 1 if active_cell_index >= 0 and active_cell_index < animation_cells.size() else animation_cells.size()
 
@@ -735,9 +757,20 @@ func kill_invalid_cells() -> void:
 
 func rebuild_cell_indices() -> void:
 	for i in range(animation_cells.size()):
-		if animation_cells[i].cell_ui:
-			animation_cells[i].cell_ui.setup(i)
+		var cell = animation_cells[i]
+		if cell.cell_ui and is_instance_valid(cell.cell_ui):
+			cell.cell_ui.setup(i)
+			if cell.cell_ui.cell_clicked.is_connected(on_cell_clicked):
+				for connection in cell.cell_ui.cell_clicked.get_connections():
+					cell.cell_ui.cell_clicked.disconnect(connection.callable)
 			
+			if cell.cell_ui.cell_closed.is_connected(on_cell_closed):
+				for connection in cell.cell_ui.cell_closed.get_connections():
+					cell.cell_ui.cell_closed.disconnect(connection.callable)
+					
+			cell.cell_ui.cell_clicked.connect(func(): on_cell_clicked(i))
+			cell.cell_ui.cell_closed.connect(func(): on_cell_closed(i))
+	
 
 func _on_play_button_pressed() -> void:
 	if animation_cells.is_empty():
@@ -808,10 +841,7 @@ func _on_default_offsets_button_pressed() -> void:
 		return
 		
 	var grab_offset = read_grab_offset(imported_sprite_path)
-	if grab_offset != null:
-		sprite_offset = grab_offset
-	else:
-		sprite_offset = DEFAULT_SPRITE_OFFSET
+	sprite_offset = grab_offset
 	cell.sprite_offset = sprite_offset
 	update_weapon_position()
 	update_cell_ghost(active_cell_index)
