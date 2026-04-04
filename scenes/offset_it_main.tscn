@@ -120,6 +120,7 @@ anchor_bottom = 1.0
 offset_top = -50.0
 offset_right = 317.0
 grow_vertical = 0
+theme_override_constants/separation = 32
 
 [node name="OffsetLabel" type="Label" parent="OffsetDataContainer" unique_id=1190270802]
 layout_mode = 2
@@ -155,6 +156,7 @@ offset_top = -201.0
 offset_bottom = 201.0
 grow_horizontal = 0
 grow_vertical = 2
+theme_override_constants/separation = 16
 
 [node name="OffsetItDisplayTitle" type="Label" parent="OffsetItDisplay" unique_id=1791688122]
 layout_mode = 2
@@ -184,11 +186,12 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -199.5
+offset_left = -216.0
 offset_top = -55.0
-offset_right = 199.5
+offset_right = 183.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="PlayButton" type="Button" parent="ButtonHBox" unique_id=45182657]
@@ -242,9 +245,9 @@ columns = 12
 
 [node name="DefaultOffsetsButton" type="Button" parent="." unique_id=757788081]
 layout_mode = 0
-offset_left = 57.0
+offset_left = 101.0
 offset_top = 719.0
-offset_right = 153.0
+offset_right = 197.0
 offset_bottom = 741.0
 text = "Default Offsets"
 

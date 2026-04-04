@@ -469,11 +469,6 @@ func regenerate_decorate_code() -> void:
 		if cell.sprite_name != last_sprite_name and cell.sprite_name != "":
 			code_lines.append("// --- Sprite: %s ---" % cell.sprite_name)
 
-			if i > 0:
-				var sprite_code = generate_sprite_code(cell.sprite_name)
-				var instant_code = sprite_code.left(sprite_code.length() - 1) + "0"
-				code_lines.append("%s A_WeaponReady(15)" % instant_code)
-			
 			last_sprite_name = cell.sprite_name
 
 		var movement = cell.sprite_offset - cell.reference_offset
