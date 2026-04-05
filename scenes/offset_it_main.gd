@@ -49,7 +49,7 @@ class CellData:
 	var sprite_texture: Texture2D = null
 	var sprite_size: Vector2 = Vector2.ZERO
 	var sprite_offset: Vector2 = Vector2.ZERO
-	var reference_offset: Vector2 = Vector2.ZERO  # NEW: The offset that maps to (0, 32)
+	var reference_offset: Vector2 = Vector2.ZERO
 	var cell_ui: AnimCell = null
 	var ghost_node: TextureRect = null
 	
