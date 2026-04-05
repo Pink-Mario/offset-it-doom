@@ -286,12 +286,11 @@ func create_cell_from_drag() -> void:
 		ref_offset = animation_cells[active_cell_index].reference_offset
 		delete_cells_after(active_cell_index)
 	
-	# Calculate start and end positions for interpolation
 	var start_pos = ANCHOR_POINT - drag_start_offset
 	var end_pos = weapon_sprite.position
 	
-	for i in range(0, steps):  # Changed from range(1, steps + 1) to range(0, steps)
-		var t = float(i + 1) / float(steps)  # i+1 so first frame is at 1/steps, not 0/steps
+	for i in range(0, steps):
+		var t = float(i + 1) / float(steps)
 		var interpolated_pos: Vector2
 		
 		if curve_points.size() >= 2:
@@ -302,11 +301,9 @@ func create_cell_from_drag() -> void:
 		var interpolated_offset = ANCHOR_POINT - interpolated_pos
 		
 		if i == 0:
-			# Update cell 0 with the first interpolated position
 			animation_cells[active_cell_index].sprite_offset = interpolated_offset.round()
 			update_cell_ghost(active_cell_index)
 		else:
-			# Create new cells for subsequent frames
 			var new_cell = CellData.new()
 			new_cell.sprite_texture = weapon_sprite.texture
 			new_cell.sprite_size = weapon_sprite.size
@@ -549,7 +546,7 @@ func import_weapon_sprite(path: String) -> void:
 		cell.sprite_texture = tex
 		cell.sprite_size = new_size
 		cell.sprite_offset = sprite_offset
-		cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
+		cell.reference_offset = sprite_offset
 
 		if cell.ghost_node and is_instance_valid(cell.ghost_node):
 			cell.ghost_node.texture = tex
@@ -573,7 +570,7 @@ func import_weapon_sprite(path: String) -> void:
 		new_cell.sprite_size = new_size
 		new_cell.sprite_name = new_sprite_name
 		new_cell.sprite_offset = sprite_offset
-		new_cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
+		new_cell.reference_offset = sprite_offset
 		animation_cells.append(new_cell)
 		add_cell_ui(0)
 		create_ghost_for_cell(0)
@@ -583,7 +580,7 @@ func import_weapon_sprite(path: String) -> void:
 		cell.sprite_texture = tex
 		cell.sprite_name = new_sprite_name
 		cell.sprite_offset = sprite_offset
-		cell.reference_offset = sprite_offset  # NEW: Set reference to grAb offset
+		cell.reference_offset = sprite_offset
 		update_cell_ghost(active_cell_index)
 
 	update_slider_range()
